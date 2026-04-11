@@ -23,6 +23,7 @@ import {
   updateTransaction,
 } from '../services/transactionService';
 import { useFocusEffect } from '@react-navigation/native';
+import ScreenTransition from '../components/ScreenTransition';
 
 //==================================================================================
 // Types
@@ -1172,31 +1173,33 @@ export default function TransactionsScreen() {
   //==================================================================================
 
   return (
-    <LinearGradient
-      colors={[Colors.background1, Colors.background2]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
-      <View style={styles.titleContainer}>
-        <View>
-          <Text style={styles.title}>Transações</Text>
-          <Text style={styles.subtitle}>Gerencie suas entradas e saídas</Text>
+    <ScreenTransition>
+      <LinearGradient
+        colors={[Colors.background1, Colors.background2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.container}
+      >
+        <View style={styles.titleContainer}>
+          <View>
+            <Text style={styles.title}>Transações</Text>
+            <Text style={styles.subtitle}>Gerencie suas entradas e saídas</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => setAddTransactionVisible(true)}
+            style={styles.addTransactionButton}
+          >
+            <MaterialDesignIcons name="plus" size={24} color={Colors.surface} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => setAddTransactionVisible(true)}
-          style={styles.addTransactionButton}
-        >
-          <MaterialDesignIcons name="plus" size={24} color={Colors.surface} />
-        </TouchableOpacity>
-      </View>
 
-      {renderFilter()}
-      {isLoading ? renderLoading() : renderTransactions()}
+        {renderFilter()}
+        {isLoading ? renderLoading() : renderTransactions()}
 
-      {addTransactionModal()}
-      {updateTransactionModal()}
-    </LinearGradient>
+        {addTransactionModal()}
+        {updateTransactionModal()}
+      </LinearGradient>
+    </ScreenTransition>
   );
 }
 

@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { listTransactions, Transaction } from '../services/transactionService';
 import { CurveType, LineChart } from 'react-native-gifted-charts';
+import ScreenTransition from '../components/ScreenTransition';
 
 const MONTH_OPTIONS = [
   { label: 'Janeiro', value: 0 },
@@ -558,36 +559,38 @@ export default function ReportsScreen() {
   // Main Render
   //==================================================================================
   return (
-    <LinearGradient
-      colors={[Colors.background1, Colors.background2]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
-      <View style={styles.titleContainer}>
-        <View>
-          <Text style={styles.title}>Relatórios</Text>
-          <Text style={styles.subtitle}>Análise detalhada dos seus gastos</Text>
-        </View>
-      </View>
-      {renderFilter()}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+    <ScreenTransition>
+      <LinearGradient
+        colors={[Colors.background1, Colors.background2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.container}
       >
-        {isLoading ? (
-          <View style={styles.loadingRow}>
-            <ActivityIndicator size="small" color={Colors.primary} />
+        <View style={styles.titleContainer}>
+          <View>
+            <Text style={styles.title}>Relatórios</Text>
+            <Text style={styles.subtitle}>Análise detalhada dos seus gastos</Text>
           </View>
-        ) : (
-          <>
-            {renderSummaryCards()}
-            {renderTrendCard()}
-            {renderTopCategoriesCard()}
-          </>
-        )}
-      </ScrollView>
-    </LinearGradient>
+        </View>
+        {renderFilter()}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {isLoading ? (
+            <View style={styles.loadingRow}>
+              <ActivityIndicator size="small" color={Colors.primary} />
+            </View>
+          ) : (
+            <>
+              {renderSummaryCards()}
+              {renderTrendCard()}
+              {renderTopCategoriesCard()}
+            </>
+          )}
+        </ScrollView>
+      </LinearGradient>
+    </ScreenTransition>
   );
 }
 

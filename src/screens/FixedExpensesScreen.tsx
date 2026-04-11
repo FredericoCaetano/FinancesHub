@@ -25,6 +25,7 @@ import {
   toggleFixedExpenseStatus,
   updateFixedExpense,
 } from '../services/fixedExpensesService';
+import ScreenTransition from '../components/ScreenTransition';
 
 //==================================================================================
 // Constants
@@ -1609,31 +1610,33 @@ export default function FixedExpensesScreen() {
   //==================================================================================
 
   return (
-    <LinearGradient
-      colors={[Colors.background1, Colors.background2]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
-      <View style={styles.titleContainer}>
-        <View>
-          <Text style={styles.title}>Gastos Fixos</Text>
-          <Text style={styles.subtitle}>Gerencie seus gastos fixos</Text>
+    <ScreenTransition>
+      <LinearGradient
+        colors={[Colors.background1, Colors.background2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.container}
+      >
+        <View style={styles.titleContainer}>
+          <View>
+            <Text style={styles.title}>Gastos Fixos</Text>
+            <Text style={styles.subtitle}>Gerencie seus gastos fixos</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => setAddFixedExpenseVisible(true)}
+            style={styles.addFixedExpenseButton}
+          >
+            <MaterialDesignIcons name="plus" size={24} color={Colors.surface} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => setAddFixedExpenseVisible(true)}
-          style={styles.addFixedExpenseButton}
-        >
-          <MaterialDesignIcons name="plus" size={24} color={Colors.surface} />
-        </TouchableOpacity>
-      </View>
 
-      {!isLoading && renderMonthlySummary()}
-      {renderFixedExpenses()}
+        {!isLoading && renderMonthlySummary()}
+        {renderFixedExpenses()}
 
-      {addFixedExpenseModal()}
-      {updateFixedExpenseModal()}
-    </LinearGradient>
+        {addFixedExpenseModal()}
+        {updateFixedExpenseModal()}
+      </LinearGradient>
+    </ScreenTransition>
   );
 }
 

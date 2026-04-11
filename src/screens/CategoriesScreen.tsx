@@ -22,6 +22,7 @@ import {
 import { Shadow } from 'react-native-shadow-2';
 import LinearGradient from 'react-native-linear-gradient';
 import { useFocusEffect } from '@react-navigation/native';
+import ScreenTransition from '../components/ScreenTransition';
 
 //==================================================================================
 // Types
@@ -1193,28 +1194,30 @@ export default function CategoriesScreen() {
   // Main Render
   //==================================================================================
   return (
-    <LinearGradient
-      colors={[Colors.background1, Colors.background2]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
-      <View style={styles.titleContainer}>
-        <View>
-          <Text style={styles.title}>Categorias</Text>
-          <Text style={styles.subtitle}>Organize suas transações</Text>
+    <ScreenTransition>
+      <LinearGradient
+        colors={[Colors.background1, Colors.background2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.container}
+      >
+        <View style={styles.titleContainer}>
+          <View>
+            <Text style={styles.title}>Categorias</Text>
+            <Text style={styles.subtitle}>Organize suas transações</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => setAddCategoryVisible(true)}
+            style={styles.addCategoryButton}
+          >
+            <MaterialDesignIcons name="plus" size={24} color={Colors.surface} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => setAddCategoryVisible(true)}
-          style={styles.addCategoryButton}
-        >
-          <MaterialDesignIcons name="plus" size={24} color={Colors.surface} />
-        </TouchableOpacity>
-      </View>
-      {addCategoryModal()}
-      {updateCategoryModal()}
-      {renderCategories()}
-    </LinearGradient>
+        {addCategoryModal()}
+        {updateCategoryModal()}
+        {renderCategories()}
+      </LinearGradient>
+    </ScreenTransition>
   );
 }
 
