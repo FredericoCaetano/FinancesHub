@@ -1,0 +1,26 @@
+export const Colors = {
+  primary: '#990FFA',
+  primaryLight: '#c85cff',
+  secondary: '#5a0f5a',
+  background1: '#F9F6FF',
+  background2: '#FDFCFF',
+  surface: '#ffffff',
+  surfaceAlt: '#efe7f3',
+  textPrimary: '#1d1222',
+  textSecondary: '#685372b8',
+  textInverted: '#E2DAFF',
+  border: '#dccfe3',
+  success: '#2d9d78',
+  successBackground: '#DCFCE6',
+  warning: '#d18b2f',
+  error: '#c83b4b',
+  errorBackground: '#FFE2E2',
+  info: '#3a7fd1',
+  overlay: 'rgba(0, 0, 0, 0.35)',
+  overlayLight: 'rgba(0, 0, 0, 0.15)',
+  black: '#000000',
+  white: '#ffffff',
+  gray: '#D1D5DB',
+} as const;
+
+export type AppColor = keyof typeof Colors;
