@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   ScrollView,
   StyleSheet,
@@ -38,6 +39,7 @@ const formatDayLabel = (d: Date) =>
 //==================================================================================
 function DashboardScreen() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [monthlySummary, setMonthlySummary] = useState({
     balance: 0,
     income: 0,
@@ -54,11 +56,27 @@ function DashboardScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let isActive = true;
+
       const load = async () => {
-        const list = await listTransactions();
-        setTransactions(list);
+        setIsLoading(true);
+        setTransactions([]);
+        setMonthlySummary({ balance: 0, income: 0, expenses: 0 });
+        setMonthlyTransactions([]);
+        setMonthlyAvarageExpenses(0);
+        try {
+          const list = await listTransactions();
+          if (!isActive) return;
+          setTransactions(list);
+        } finally {
+          if (isActive) setIsLoading(false);
+        }
       };
+
       load();
+      return () => {
+        isActive = false;
+      };
     }, []),
   );
 
@@ -217,6 +235,11 @@ function DashboardScreen() {
     const latest = sorted.slice(0, 5);
     return (
       <View style={{ width: '100%', flexDirection: 'column', gap: 12 }}>
+        {latest.length === 0 && (
+          <Text style={{ fontSize: 14, color: Colors.textSecondary }}>
+            Nenhuma transação no último mês
+          </Text>
+        )}
         {latest.map(transaction => (
           <View
             key={transaction.id}
@@ -295,6 +318,14 @@ function DashboardScreen() {
     );
   };
 
+  const renderLoading = () => {
+    return (
+      <View style={styles.loadingRow}>
+        <ActivityIndicator size="small" color={Colors.primary} />
+      </View>
+    );
+  };
+
   //==================================================================================
   // Main Render
   //==================================================================================
@@ -307,147 +338,159 @@ function DashboardScreen() {
     >
       <Text style={styles.title}>Resumo Financeiro</Text>
       <Text style={styles.subtitle}>{catchDate()}</Text>
-      <Shadow
-        containerStyle={styles.monthlyContainer}
-        style={styles.monthlyShadow}
-        distance={3}
-        startColor="rgba(0, 0, 0, 0.05)"
-        offset={[0, 3]}
-      >
-        <LinearGradient
-          colors={[Colors.primaryLight, Colors.primary]}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 1, y: 0 }}
-          style={{ borderRadius: 12, padding: 20 }}
-        >
-          <Text style={styles.monthlyDataLabel}>Saldo do Mês</Text>
-          <Text style={styles.monthlyDataValue}>
-            R$ {formatMoney(monthlySummary.balance)}
-          </Text>
-          <View style={styles.monthlyDataDivider} />
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-            <View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialDesignIcons
-                  name="arrow-up-circle-outline"
-                  size={12}
-                  color={Colors.surface}
-                />
-                <Text style={styles.monthlyDataSecondaryLabel}>Entradas</Text>
-              </View>
-              <Text style={styles.monthlyDataSecondaryValue}>
-                R$ {formatMoney(monthlySummary.income)}
-              </Text>
-            </View>
-            <View style={{ marginLeft: 80 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialDesignIcons
-                  name="arrow-down-circle-outline"
-                  size={12}
-                  color={Colors.surface}
-                />
-                <Text style={styles.monthlyDataSecondaryLabel}>Saídas</Text>
-              </View>
-              <Text style={styles.monthlyDataSecondaryValue}>
-                R$ {formatMoney(monthlySummary.expenses)}
-              </Text>
-            </View>
-          </View>
-        </LinearGradient>
-      </Shadow>
-      <ScrollView
-        style={{ flex: 1, marginTop: 16 }}
-        contentContainerStyle={{ paddingBottom: 16 }}
-        showsVerticalScrollIndicator={false}
-        nestedScrollEnabled={true}
-      >
-        <View style={styles.trasactionsRowContainer}>
+      {isLoading ? (
+        renderLoading()
+      ) : (
+        <>
           <Shadow
-            containerStyle={styles.transactionsCardShadowContainer}
-            style={styles.transactionsShadowCardContainer}
+            containerStyle={styles.monthlyContainer}
+            style={styles.monthlyShadow}
             distance={3}
             startColor="rgba(0, 0, 0, 0.05)"
             offset={[0, 3]}
           >
-            <View style={styles.transactionsCardContainer}>
-              <MaterialDesignIcons
-                name="wallet-outline"
-                size={20}
-                color={Colors.primary}
-              />
-              <Text style={styles.transactionsQuantity}>
-                {monthlyTransactions.length}
+            <LinearGradient
+              colors={[Colors.primaryLight, Colors.primary]}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 1, y: 0 }}
+              style={{ borderRadius: 12, padding: 20 }}
+            >
+              <Text style={styles.monthlyDataLabel}>Saldo do Mês</Text>
+              <Text style={styles.monthlyDataValue}>
+                R$ {formatMoney(monthlySummary.balance)}
               </Text>
-              <Text style={styles.transactionsLabel}>Transações</Text>
-            </View>
+              <View style={styles.monthlyDataDivider} />
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}
+              >
+                <View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <MaterialDesignIcons
+                      name="arrow-up-circle-outline"
+                      size={12}
+                      color={Colors.surface}
+                    />
+                    <Text style={styles.monthlyDataSecondaryLabel}>
+                      Entradas
+                    </Text>
+                  </View>
+                  <Text style={styles.monthlyDataSecondaryValue}>
+                    R$ {formatMoney(monthlySummary.income)}
+                  </Text>
+                </View>
+                <View style={{ marginLeft: 80 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <MaterialDesignIcons
+                      name="arrow-down-circle-outline"
+                      size={12}
+                      color={Colors.surface}
+                    />
+                    <Text style={styles.monthlyDataSecondaryLabel}>
+                      Saídas
+                    </Text>
+                  </View>
+                  <Text style={styles.monthlyDataSecondaryValue}>
+                    R$ {formatMoney(monthlySummary.expenses)}
+                  </Text>
+                </View>
+              </View>
+            </LinearGradient>
           </Shadow>
-
-          <Shadow
-            containerStyle={styles.transactionsCardShadowContainer}
-            style={styles.transactionsShadowCardContainer}
-            distance={3}
-            startColor="rgba(0, 0, 0, 0.05)"
-            offset={[0, 3]}
+          <ScrollView
+            style={{ flex: 1, marginTop: 16 }}
+            contentContainerStyle={{ paddingBottom: 16 }}
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
           >
-            <View style={styles.transactionsCardContainer}>
-              <MaterialDesignIcons
-                name="chart-line-variant"
-                size={20}
-                color={Colors.error}
-              />
-              <Text style={styles.transactionsQuantity}>
-                R$ {formatMoney(monthlyAvarageExpenses)}
-              </Text>
-              <Text style={styles.transactionsLabel}>Gasto Médio</Text>
-            </View>
-          </Shadow>
-        </View>
+            <View style={styles.trasactionsRowContainer}>
+              <Shadow
+                containerStyle={styles.transactionsCardShadowContainer}
+                style={styles.transactionsShadowCardContainer}
+                distance={3}
+                startColor="rgba(0, 0, 0, 0.05)"
+                offset={[0, 3]}
+              >
+                <View style={styles.transactionsCardContainer}>
+                  <MaterialDesignIcons
+                    name="wallet-outline"
+                    size={20}
+                    color={Colors.primary}
+                  />
+                  <Text style={styles.transactionsQuantity}>
+                    {monthlyTransactions.length}
+                  </Text>
+                  <Text style={styles.transactionsLabel}>Transações</Text>
+                </View>
+              </Shadow>
 
-        <Shadow
-          containerStyle={styles.lastSevenDaysShadowContainer}
-          style={styles.lastSevenDaysShadow}
-          distance={3}
-          startColor="rgba(0, 0, 0, 0.05)"
-          offset={[0, 3]}
-        >
-          <View style={styles.lastSevenDaysContainer}>
-            <Text style={styles.lastSevenDaysTitle}>Últimos 7 dias</Text>
-            <BarChart
-              data={chartData}
-              noOfSections={4}
-              rulesColor="rgba(0,0,0,0.12)"
-              rulesThickness={1}
-              maxValue={maxValue}
-              minHeight={1}
-              barWidth={BAR_WIDTH}
-              barBorderTopLeftRadius={3}
-              barBorderTopRightRadius={3}
-              yAxisThickness={0}
-              xAxisThickness={1}
-              xAxisColor="rgba(0,0,0,0.3)"
-              yAxisColor="rgba(0,0,0,0.3)"
-              xAxisLabelTextStyle={axisLabelTextStyle}
-              yAxisTextStyle={axisLabelTextStyle}
-              yAxisTextNumberOfLines={1}
-              yAxisLabelWidth={32}
-            />
-          </View>
-        </Shadow>
-        <Shadow
-          containerStyle={styles.recentsTransactionsShadowContainer}
-          style={styles.recentsTransactionsShadow}
-          distance={3}
-          startColor="rgba(0, 0, 0, 0.05)"
-          offset={[0, 3]}
-        >
-          <View style={styles.recentsTransactionsContainer}>
-            <Text style={styles.recentsTransactionsTitle}>
-              Transações Recentes
-            </Text>
-            {renderMonthlyTransactions()}
-          </View>
-        </Shadow>
-      </ScrollView>
+              <Shadow
+                containerStyle={styles.transactionsCardShadowContainer}
+                style={styles.transactionsShadowCardContainer}
+                distance={3}
+                startColor="rgba(0, 0, 0, 0.05)"
+                offset={[0, 3]}
+              >
+                <View style={styles.transactionsCardContainer}>
+                  <MaterialDesignIcons
+                    name="chart-line-variant"
+                    size={20}
+                    color={Colors.error}
+                  />
+                  <Text style={styles.transactionsQuantity}>
+                    R$ {formatMoney(monthlyAvarageExpenses)}
+                  </Text>
+                  <Text style={styles.transactionsLabel}>Gasto Médio</Text>
+                </View>
+              </Shadow>
+            </View>
+
+            <Shadow
+              containerStyle={styles.lastSevenDaysShadowContainer}
+              style={styles.lastSevenDaysShadow}
+              distance={3}
+              startColor="rgba(0, 0, 0, 0.05)"
+              offset={[0, 3]}
+            >
+              <View style={styles.lastSevenDaysContainer}>
+                <Text style={styles.lastSevenDaysTitle}>Últimos 7 dias</Text>
+                <BarChart
+                  data={chartData}
+                  noOfSections={4}
+                  rulesColor="rgba(0,0,0,0.12)"
+                  rulesThickness={1}
+                  maxValue={maxValue}
+                  minHeight={1}
+                  barWidth={BAR_WIDTH}
+                  barBorderTopLeftRadius={3}
+                  barBorderTopRightRadius={3}
+                  yAxisThickness={0}
+                  xAxisThickness={1}
+                  xAxisColor="rgba(0,0,0,0.3)"
+                  yAxisColor="rgba(0,0,0,0.3)"
+                  xAxisLabelTextStyle={axisLabelTextStyle}
+                  yAxisTextStyle={axisLabelTextStyle}
+                  yAxisTextNumberOfLines={1}
+                  yAxisLabelWidth={32}
+                />
+              </View>
+            </Shadow>
+            <Shadow
+              containerStyle={styles.recentsTransactionsShadowContainer}
+              style={styles.recentsTransactionsShadow}
+              distance={3}
+              startColor="rgba(0, 0, 0, 0.05)"
+              offset={[0, 3]}
+            >
+              <View style={styles.recentsTransactionsContainer}>
+                <Text style={styles.recentsTransactionsTitle}>
+                  Transações Recentes
+                </Text>
+                {renderMonthlyTransactions()}
+              </View>
+            </Shadow>
+          </ScrollView>
+        </>
+      )}
     </LinearGradient>
   );
 }
@@ -467,6 +510,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
   },
 
   // Monthly Summary Styles

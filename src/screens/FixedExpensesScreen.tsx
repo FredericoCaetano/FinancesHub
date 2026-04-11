@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   Switch,
@@ -50,6 +51,7 @@ const FIXED_EXPENSES_FREQUENCY_OPTIONS: Array<{
 
 export default function FixedExpensesScreen() {
   const [fixedExpenses, setFixedExpenses] = useState<FixedExpense[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [addFixedExpenseVisible, setAddFixedExpenseVisible] = useState(false);
   const [
     addFixedExpenseTypeDropdownVisible,
@@ -82,27 +84,35 @@ export default function FixedExpensesScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const load = async () => {
-        const list = await listFixedExpenses();
-        setFixedExpenses(list);
-      };
-      load();
-    }, []),
-  );
+      let isActive = true;
 
-  useFocusEffect(
-    useCallback(() => {
-      const loadCategories = async () => {
-        const raw = await AsyncStorage.getItem('CATEGORIES');
-        const categories = raw ? JSON.parse(raw) : [];
-        const options = categories.map((cat: any) => ({
-          label: cat.name,
-          value: cat.id,
-          type: cat.type,
-        }));
-        setFixedExpensesCategoryOptions(options);
+      const load = async () => {
+        setIsLoading(true);
+        setFixedExpenses([]);
+        setFixedExpensesCategoryOptions([]);
+        try {
+          const [list, raw] = await Promise.all([
+            listFixedExpenses(),
+            AsyncStorage.getItem('CATEGORIES'),
+          ]);
+          if (!isActive) return;
+          setFixedExpenses(list);
+          const categories = raw ? JSON.parse(raw) : [];
+          const options = categories.map((cat: any) => ({
+            label: cat.name,
+            value: cat.id,
+            type: cat.type,
+          }));
+          setFixedExpensesCategoryOptions(options);
+        } finally {
+          if (isActive) setIsLoading(false);
+        }
       };
-      loadCategories();
+
+      load();
+      return () => {
+        isActive = false;
+      };
     }, []),
   );
 
@@ -1125,6 +1135,14 @@ export default function FixedExpensesScreen() {
   };
 
   const renderFixedExpenses = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingRow}>
+          <ActivityIndicator size="small" color={Colors.primary} />
+        </View>
+      );
+    }
+
     const active = fixedExpenses.filter(cat => cat.status === true);
     const inactive = fixedExpenses.filter(cat => cat.status === false);
 
@@ -1610,7 +1628,7 @@ export default function FixedExpensesScreen() {
         </TouchableOpacity>
       </View>
 
-      {renderMonthlySummary()}
+      {!isLoading && renderMonthlySummary()}
       {renderFixedExpenses()}
 
       {addFixedExpenseModal()}
@@ -1771,6 +1789,12 @@ paddingBottom: 32,
   inlineDropdownOptionTextSelected: {
     fontWeight: '600',
     color: Colors.textPrimary,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
   },
 
   // Fixed Expenses Styles

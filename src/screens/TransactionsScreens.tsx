@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   StyleSheet,
@@ -48,12 +49,15 @@ const TRANSACTIONS_FILTER_TYPE_OPTIONS = [
 
 export default function TransactionsScreen() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [addTransactionVisible, setAddTransactionVisible] = useState(false);
   const [addTypeDropdownVisible, setAddTypeDropdownVisible] = useState(false);
   const [addCategoryDropdownVisible, setAddCategoryDropdownVisible] =
     useState(false);
-    const [updateTypeDropdownVisible, setUpdateTypeDropdownVisible] = useState(false);
-  const [updateCategoryDropdownVisible, setUpdateCategoryDropdownVisible] = useState(false);
+  const [updateTypeDropdownVisible, setUpdateTypeDropdownVisible] =
+    useState(false);
+  const [updateCategoryDropdownVisible, setUpdateCategoryDropdownVisible] =
+    useState(false);
   const [filterTypeDropdownVisible, setFilterTypeDropdownVisible] =
     useState(false);
   const [filterCategoryDropdownVisible, setFilterCategoryDropdownVisible] =
@@ -64,37 +68,51 @@ export default function TransactionsScreen() {
     transactionsFilterCategoryOptions,
     setTransactionsFilterCategoryOptions,
   ] = useState<{ label: string; value: string }[]>([]);
-  const [updateTransactionVisible, setUpdateTransactionVisible] = useState(false);
+  const [updateTransactionVisible, setUpdateTransactionVisible] =
+    useState(false);
 
   useFocusEffect(
     useCallback(() => {
+      let isActive = true;
+
       const load = async () => {
-        const list = await listTransactions();
-        setTransactions(list);
-      };
-      load();
-    }, []),
-  );
+        setIsLoading(true);
+        setTransactions([]);
+        setTransactionsCategoryOptions([]);
+        setTransactionsFilterCategoryOptions([]);
+        setTransactionFilterCategory(null);
 
-  useFocusEffect(
-    useCallback(() => {
-      const loadCategories = async () => {
-        const raw = await AsyncStorage.getItem('CATEGORIES');
-        const categories = raw ? JSON.parse(raw) : [];
-        const options = categories.map((cat: any) => ({
-          label: cat.name,
-          value: cat.id,
-          type: cat.type,
-        }));
-        setTransactionsCategoryOptions(options);
-        const filterOptions = [
-          { label: 'Todas', value: 'all', type: 'all' },
-          ...options,
-        ];
-        setTransactionsFilterCategoryOptions(filterOptions);
-        setTransactionFilterCategory(filterOptions[0]);
+        try {
+          const [list, raw] = await Promise.all([
+            listTransactions(),
+            AsyncStorage.getItem('CATEGORIES'),
+          ]);
+
+          if (!isActive) return;
+
+          setTransactions(list);
+          const categories = raw ? JSON.parse(raw) : [];
+          const options = categories.map((cat: any) => ({
+            label: cat.name,
+            value: cat.id,
+            type: cat.type,
+          }));
+          setTransactionsCategoryOptions(options);
+          const filterOptions = [
+            { label: 'Todas', value: 'all', type: 'all' },
+            ...options,
+          ];
+          setTransactionsFilterCategoryOptions(filterOptions);
+          setTransactionFilterCategory(filterOptions[0]);
+        } finally {
+          if (isActive) setIsLoading(false);
+        }
       };
-      loadCategories();
+
+      load();
+      return () => {
+        isActive = false;
+      };
     }, []),
   );
 
@@ -137,7 +155,9 @@ export default function TransactionsScreen() {
   };
 
   const handleUpdateTransaction = async () => {
-    const selected = transactions.find(cat => cat.id === updateTransactionIdValue);
+    const selected = transactions.find(
+      cat => cat.id === updateTransactionIdValue,
+    );
     const trimmedDescription = updateTransactionDescriptionValue.trim();
     if (trimmedDescription === '') {
       return;
@@ -260,7 +280,7 @@ export default function TransactionsScreen() {
     );
   };
 
-   //==================================================================================
+  //==================================================================================
   // Update Form States
   //==================================================================================
   const [updateTransactionIdValue, setUpdateTransactionIdValue] = useState('');
@@ -283,11 +303,14 @@ export default function TransactionsScreen() {
   };
 
   // Description Form State
-  const [updateTransactionDescriptionValue, setUpdateTransactionDescriptionValue] =
-    useState('');
+  const [
+    updateTransactionDescriptionValue,
+    setUpdateTransactionDescriptionValue,
+  ] = useState('');
 
   // Value Form State
-  const [updateTransactionValueText, setUpdateTransactionValueText] = useState('');
+  const [updateTransactionValueText, setUpdateTransactionValueText] =
+    useState('');
   const [updateValueFloat, setUpdateValueFloat] = useState(0);
   const onChangeUpdateValue = (text: string) => {
     setUpdateTransactionValueText(text);
@@ -354,7 +377,6 @@ export default function TransactionsScreen() {
       </View>
     );
   };
-
 
   //==================================================================================
   // Filter States
@@ -606,10 +628,16 @@ export default function TransactionsScreen() {
     );
 
     return (
-      <Modal transparent visible={updateTransactionVisible} statusBarTranslucent>
+      <Modal
+        transparent
+        visible={updateTransactionVisible}
+        statusBarTranslucent
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.addTransactionModalContainer}>
-            <Text style={styles.addTransactionModalTitle}>Editar Transação</Text>
+            <Text style={styles.addTransactionModalTitle}>
+              Editar Transação
+            </Text>
             <Text style={styles.addTransactionModalSubTitle}>
               Edite os dados da transação
             </Text>
@@ -625,7 +653,9 @@ export default function TransactionsScreen() {
                   {updateTransactionTypeValue.label}
                 </Text>
                 <MaterialDesignIcons
-                  name={updateTypeDropdownVisible ? 'chevron-up' : 'chevron-down'}
+                  name={
+                    updateTypeDropdownVisible ? 'chevron-up' : 'chevron-down'
+                  }
                   size={16}
                   color={Colors.textSecondary}
                 />
@@ -714,7 +744,9 @@ export default function TransactionsScreen() {
                 </Text>
                 <MaterialDesignIcons
                   name={
-                    updateCategoryDropdownVisible ? 'chevron-up' : 'chevron-down'
+                    updateCategoryDropdownVisible
+                      ? 'chevron-up'
+                      : 'chevron-down'
                   }
                   size={16}
                   color={Colors.textSecondary}
@@ -952,6 +984,24 @@ export default function TransactionsScreen() {
 
     return (
       <View style={styles.transactionsContainer}>
+        {transactions.length === 0 && (
+          <Shadow
+            containerStyle={styles.emptyShadowContainer}
+            style={styles.emptyShadow}
+            distance={3}
+            startColor="rgba(0, 0, 0, 0.05)"
+            offset={[0, 3]}
+          >
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyTextTitle}>
+                Nenhuma transação adicionada
+              </Text>
+              <Text style={styles.emptyTextSubtitle}>
+                Toque no + para adicionar
+              </Text>
+            </View>
+          </Shadow>
+        )}
         <FlatList
           data={sorted}
           keyExtractor={item => item.id}
@@ -1109,6 +1159,14 @@ export default function TransactionsScreen() {
     );
   };
 
+  const renderLoading = () => {
+    return (
+      <View style={styles.loadingRow}>
+        <ActivityIndicator size="small" color={Colors.primary} />
+      </View>
+    );
+  };
+
   //==================================================================================
   // Main Render
   //==================================================================================
@@ -1134,7 +1192,7 @@ export default function TransactionsScreen() {
       </View>
 
       {renderFilter()}
-      {renderTransactions()}
+      {isLoading ? renderLoading() : renderTransactions()}
 
       {addTransactionModal()}
       {updateTransactionModal()}
@@ -1215,6 +1273,12 @@ const styles = StyleSheet.create({
   filterOptionLabel: {
     fontSize: 14,
     color: Colors.textPrimary,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
   },
 
   // Modal Styles
@@ -1351,5 +1415,35 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: Colors.surface,
     borderRadius: 8,
+  },
+
+  emptyContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    gap: 8,
+    paddingVertical: 20,
+    backgroundColor: Colors.surface,
+    borderRadius: 8,
+  },
+  emptyShadowContainer: {
+    width: '100%',
+    marginBottom: 12,
+  },
+  emptyShadow: {
+    borderRadius: 8,
+    width: '100%',
+  },
+  emptyTextTitle: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  emptyTextSubtitle: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    textAlign: 'center',
   },
 });

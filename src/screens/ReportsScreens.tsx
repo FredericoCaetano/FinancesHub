@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   DimensionValue,
   ScrollView,
   StyleSheet,
@@ -53,6 +54,7 @@ const YEAR_OPTIONS = Array.from({ length: 5 }, (_, index) => {
 
 export default function ReportsScreen() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [filterMonthDropdownVisible, setFilterMonthDropdownVisible] =
     useState(false);
   const [filterYearDropdownVisible, setFilterYearDropdownVisible] =
@@ -86,11 +88,24 @@ export default function ReportsScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let isActive = true;
+
       const load = async () => {
-        const list = await listTransactions();
-        setTransactions(list);
+        setIsLoading(true);
+        setTransactions([]);
+        try {
+          const list = await listTransactions();
+          if (!isActive) return;
+          setTransactions(list);
+        } finally {
+          if (isActive) setIsLoading(false);
+        }
       };
+
       load();
+      return () => {
+        isActive = false;
+      };
     }, []),
   );
 
@@ -560,9 +575,17 @@ export default function ReportsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {renderSummaryCards()}
-        {renderTrendCard()}
-        {renderTopCategoriesCard()}
+        {isLoading ? (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator size="small" color={Colors.primary} />
+          </View>
+        ) : (
+          <>
+            {renderSummaryCards()}
+            {renderTrendCard()}
+            {renderTopCategoriesCard()}
+          </>
+        )}
       </ScrollView>
     </LinearGradient>
   );
@@ -797,5 +820,11 @@ const styles = StyleSheet.create({
   inlineDropdownOptionTextSelected: {
     fontWeight: '600',
     color: Colors.textPrimary,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
   },
 });

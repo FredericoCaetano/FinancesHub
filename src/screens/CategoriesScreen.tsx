@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   ScrollView,
@@ -101,6 +102,7 @@ const hexToRgba = (hex: string, alpha = 1) => {
 
 export default function CategoriesScreen() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [addCategoryVisible, setAddCategoryVisible] = useState(false);
   const [addTypeDropdownVisible, setAddTypeDropdownVisible] = useState(false);
   const [addIconDropdownVisible, setAddIconDropdownVisible] = useState(false);
@@ -115,11 +117,24 @@ export default function CategoriesScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let isActive = true;
+
       const load = async () => {
-        const list = await listCategories();
-        setCategories(list);
+        setIsLoading(true);
+        setCategories([]);
+        try {
+          const list = await listCategories();
+          if (!isActive) return;
+          setCategories(list);
+        } finally {
+          if (isActive) setIsLoading(false);
+        }
       };
+
       load();
+      return () => {
+        isActive = false;
+      };
     }, []),
   );
 
@@ -936,6 +951,14 @@ export default function CategoriesScreen() {
   };
 
   const renderCategories = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingRow}>
+          <ActivityIndicator size="small" color={Colors.primary} />
+        </View>
+      );
+    }
+
     const incomes = categories.filter(cat => cat.type === 'income');
     const expenses = categories.filter(cat => cat.type === 'expense');
     return (
@@ -1336,6 +1359,12 @@ const styles = StyleSheet.create({
   inlineDropdownOptionTextSelected: {
     fontWeight: '600',
     color: Colors.textPrimary,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
   },
 
   previewContainer: {
