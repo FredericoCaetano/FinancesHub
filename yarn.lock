@@ -1792,6 +1792,15 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
+"@react-navigation/material-top-tabs@^7.4.23":
+  version "7.4.23"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.4.23.tgz#f3f79836d6b4d95af45a266fa845241fba346f3d"
+  integrity sha512-yIU2ne7w+LBjhhiHLwhLIuzjnY44GK6OXqls1112StR4afd5bYYUBL6WopZkBmXD/3sRooimp8iy5Cih+8Mr8w==
+  dependencies:
+    "@react-navigation/elements" "^2.9.14"
+    color "^4.2.3"
+    react-native-tab-view "^4.3.0"
+
 "@react-navigation/native-stack@^7.14.10":
   version "7.14.10"
   resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.14.10.tgz#f83ff598bbadcaec57412301f2258183af244085"
@@ -5700,6 +5709,11 @@ react-native-linear-gradient@^2.8.3:
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz#9a116649f86d74747304ee13db325e20b21e564f"
   integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
 
+react-native-pager-view@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-8.0.0.tgz#9a6cc7d8239d97581840fe51691f07320d1ce4f7"
+  integrity sha512-oAwlWT1lhTkIs9HhODnjNNl/owxzn9DP1MbP+az6OTUdgbmzA16Up83sBH8NRKwrH8rNm7iuWnX1qMqiiWOLhg==
+
 react-native-reanimated@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-4.3.0.tgz#e5284cebb85bed12d672134b39d0a1370460ae50"
@@ -5736,6 +5750,13 @@ react-native-svg@^15.15.4:
     css-select "^5.1.0"
     css-tree "^1.1.3"
     warn-once "0.1.1"
+
+react-native-tab-view@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.3.0.tgz#016414c63ed2c877f6fe6754c1252bf7842bff96"
+  integrity sha512-qPMF75uz/7+MuVG2g+YETdGMzlWZnhC6iI4h/7EBbwIBwNBIBi2z4OA6KhY3IOOBwGHXEIz5IyA6doDqifYBHg==
+  dependencies:
+    use-latest-callback "^0.2.4"
 
 react-native-worklets@^0.8.1:
   version "0.8.1"

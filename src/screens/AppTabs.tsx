@@ -1,4 +1,4 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { Colors } from '../theme';
 
@@ -7,54 +7,55 @@ import TransactionsScreen from '../screens/TransactionsScreens';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import FixedExpensesScreen from '../screens/FixedExpensesScreen';
 import ReportsScreen from '../screens/ReportsScreens';
-import { PlatformPressable } from '@react-navigation/elements';
-
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
+const TAB_ICON_SIZE = 20;
 
 export default function AppTabs() {
   return (
     <Tab.Navigator
-      detachInactiveScreens={false}
+      tabBarPosition="bottom"
       screenOptions={{
-        headerShown: false,
         lazy: false,
+        swipeEnabled: true,
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textSecondary,
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
+          borderTopWidth: 1,
+          elevation: 0,
         },
-        tabBarLabelStyle: { fontSize: 11, marginBottom: 6 },
-        tabBarButton: props => (
-          <PlatformPressable
-            {...props}
-            android_ripple={{ color: 'rgba(0,0,0,0.10)', radius: 40 }}
-            pressOpacity={0.85} // iOS
-          />
-        ),
+        tabBarLabelStyle: {
+          fontSize: 10,
+          width: '100%',
+          textTransform: 'none',
+        },
+        tabBarShowIcon: true,
+        tabBarIndicatorStyle: { height: 0 },
+        tabBarItemStyle: { alignItems: 'center', justifyContent: 'flex-start' },
       }}
     >
       <Tab.Screen
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <MaterialDesignIcons
               name="view-dashboard-outline"
-              size={size}
+              size={TAB_ICON_SIZE}
               color={color}
             />
           ),
         }}
       />
       <Tab.Screen
-        name="Transacoes"
+        name="Transações"
         component={TransactionsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <MaterialDesignIcons
               name="bank-transfer"
-              size={size}
+              size={TAB_ICON_SIZE}
               color={color}
             />
           ),
@@ -64,34 +65,38 @@ export default function AppTabs() {
         name="Categorias"
         component={CategoriesScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <MaterialDesignIcons
               name="tag-multiple-outline"
-              size={size}
+              size={TAB_ICON_SIZE}
               color={color}
             />
           ),
         }}
       />
       <Tab.Screen
-        name="GastosFixos"
+        name="Gastos Fixos"
         component={FixedExpensesScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <MaterialDesignIcons
               name="rotate-3d-variant"
-              size={size}
+              size={TAB_ICON_SIZE}
               color={color}
             />
           ),
         }}
       />
       <Tab.Screen
-        name="Relatorios"
+        name="Relatórios"
         component={ReportsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialDesignIcons name="chart-bar" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <MaterialDesignIcons
+              name="chart-bar"
+              size={TAB_ICON_SIZE}
+              color={color}
+            />
           ),
         }}
       />
