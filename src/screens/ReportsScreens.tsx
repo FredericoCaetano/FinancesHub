@@ -145,11 +145,7 @@ export default function ReportsScreen() {
   const expenseChangePositive = expenseChangePercent <= 0;
 
   const lastSixMonths = Array.from({ length: 6 }, (_, index) => {
-    const date = new Date(
-      filterYear.value,
-      filterMonth.value - (5 - index),
-      1,
-    );
+    const date = new Date(filterYear.value, filterMonth.value - (5 - index), 1);
     return {
       month: date.getMonth(),
       year: date.getFullYear(),
@@ -161,7 +157,10 @@ export default function ReportsScreen() {
     const totals = transactions.reduce(
       (acc, t) => {
         const date = new Date(t.date);
-        if (date.getMonth() === item.month && date.getFullYear() === item.year) {
+        if (
+          date.getMonth() === item.month &&
+          date.getFullYear() === item.year
+        ) {
           if (t.type === 'income') acc.income += t.value;
           if (t.type === 'expense') acc.expense += t.value;
         }
@@ -289,9 +288,7 @@ export default function ReportsScreen() {
                 style={styles.filterButtonContainer}
                 onPress={openFilterYearSheet}
               >
-                <Text style={styles.filterOptionLabel}>
-                  {filterYear.label}
-                </Text>
+                <Text style={styles.filterOptionLabel}>{filterYear.label}</Text>
                 <MaterialDesignIcons
                   name={
                     filterYearDropdownVisible ? 'chevron-up' : 'chevron-down'
@@ -382,13 +379,9 @@ export default function ReportsScreen() {
               </Text>
               <View style={styles.summaryMetaRow}>
                 <MaterialDesignIcons
-                  name={
-                    expenseChangePositive ? 'arrow-down' : 'arrow-up'
-                  }
+                  name={expenseChangePositive ? 'arrow-down' : 'arrow-up'}
                   size={14}
-                  color={
-                    expenseChangePositive ? Colors.success : Colors.error
-                  }
+                  color={expenseChangePositive ? Colors.success : Colors.error}
                 />
                 <Text
                   style={[
@@ -556,19 +549,17 @@ export default function ReportsScreen() {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
+      <View style={styles.titleContainer}>
+        <View>
+          <Text style={styles.title}>Relatórios</Text>
+          <Text style={styles.subtitle}>Análise detalhada dos seus gastos</Text>
+        </View>
+      </View>
+      {renderFilter()}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.titleContainer}>
-          <View>
-            <Text style={styles.title}>Relatórios</Text>
-            <Text style={styles.subtitle}>
-              Análise detalhada dos seus gastos
-            </Text>
-          </View>
-        </View>
-        {renderFilter()}
         {renderSummaryCards()}
         {renderTrendCard()}
         {renderTopCategoriesCard()}
