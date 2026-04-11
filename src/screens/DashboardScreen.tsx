@@ -305,65 +305,62 @@ function DashboardScreen() {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
+      <Text style={styles.title}>Resumo Financeiro</Text>
+      <Text style={styles.subtitle}>{catchDate()}</Text>
+      <Shadow
+        containerStyle={styles.monthlyContainer}
+        style={styles.monthlyShadow}
+        distance={3}
+        startColor="rgba(0, 0, 0, 0.05)"
+        offset={[0, 3]}
+      >
+        <LinearGradient
+          colors={[Colors.primaryLight, Colors.primary]}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={{ borderRadius: 12, padding: 20 }}
+        >
+          <Text style={styles.monthlyDataLabel}>Saldo do Mês</Text>
+          <Text style={styles.monthlyDataValue}>
+            R$ {formatMoney(monthlySummary.balance)}
+          </Text>
+          <View style={styles.monthlyDataDivider} />
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+            <View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialDesignIcons
+                  name="arrow-up-circle-outline"
+                  size={12}
+                  color={Colors.surface}
+                />
+                <Text style={styles.monthlyDataSecondaryLabel}>Entradas</Text>
+              </View>
+              <Text style={styles.monthlyDataSecondaryValue}>
+                R$ {formatMoney(monthlySummary.income)}
+              </Text>
+            </View>
+            <View style={{ marginLeft: 80 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialDesignIcons
+                  name="arrow-down-circle-outline"
+                  size={12}
+                  color={Colors.surface}
+                />
+                <Text style={styles.monthlyDataSecondaryLabel}>Saídas</Text>
+              </View>
+              <Text style={styles.monthlyDataSecondaryValue}>
+                R$ {formatMoney(monthlySummary.expenses)}
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </Shadow>
       <ScrollView
-        style={{ flex: 1, overflow: 'visible' }}
+        style={{ flex: 1, marginTop: 16 }}
         contentContainerStyle={{ paddingBottom: 16 }}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}
       >
-        <Text style={styles.title}>Resumo Financeiro</Text>
-        <Text style={styles.subtitle}>{catchDate()}</Text>
-        <Shadow
-          containerStyle={styles.monthlyContainer}
-          style={styles.monthlyShadow}
-          distance={3}
-          startColor="rgba(0, 0, 0, 0.05)"
-          offset={[0, 3]}
-        >
-          <LinearGradient
-            colors={[Colors.primaryLight, Colors.primary]}
-            start={{ x: 0, y: 1 }}
-            end={{ x: 1, y: 0 }}
-            style={{ borderRadius: 12, padding: 20 }}
-          >
-            <Text style={styles.monthlyDataLabel}>Saldo do Mês</Text>
-            <Text style={styles.monthlyDataValue}>
-              R$ {formatMoney(monthlySummary.balance)}
-            </Text>
-            <View style={styles.monthlyDataDivider} />
-            <View
-              style={{ flexDirection: 'row', justifyContent: 'flex-start' }}
-            >
-              <View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <MaterialDesignIcons
-                    name="arrow-up-circle-outline"
-                    size={12}
-                    color={Colors.surface}
-                  />
-                  <Text style={styles.monthlyDataSecondaryLabel}>Entradas</Text>
-                </View>
-                <Text style={styles.monthlyDataSecondaryValue}>
-                  R$ {formatMoney(monthlySummary.income)}
-                </Text>
-              </View>
-              <View style={{ marginLeft: 80 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <MaterialDesignIcons
-                    name="arrow-down-circle-outline"
-                    size={12}
-                    color={Colors.surface}
-                  />
-                  <Text style={styles.monthlyDataSecondaryLabel}>Saídas</Text>
-                </View>
-                <Text style={styles.monthlyDataSecondaryValue}>
-                  R$ {formatMoney(monthlySummary.expenses)}
-                </Text>
-              </View>
-            </View>
-          </LinearGradient>
-        </Shadow>
-
         <View style={styles.trasactionsRowContainer}>
           <Shadow
             containerStyle={styles.transactionsCardShadowContainer}
@@ -512,7 +509,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 24,
+    marginTop: 8,
     gap: 24,
   },
   transactionsCardShadowContainer: {
