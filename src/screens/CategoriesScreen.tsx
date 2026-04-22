@@ -964,7 +964,7 @@ export default function CategoriesScreen() {
     const expenses = categories.filter(cat => cat.type === 'expense');
     return (
       <View style={styles.categoriesContainer}>
-        <View>
+        <View style={{ maxHeight: 300 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -995,7 +995,7 @@ export default function CategoriesScreen() {
             </Shadow>
           )}
           <FlatList
-            style={{ overflow: 'visible' }}
+            style={{ overflow: 'hidden' }}
             data={expenses}
             numColumns={2}
             columnWrapperStyle={{ justifyContent: 'space-between' }}
@@ -1075,7 +1075,7 @@ export default function CategoriesScreen() {
             )}
           />
         </View>
-        <View>
+        <View style={{ maxHeight: 300, marginTop: 16 }}>
           <View
             style={{
               flexDirection: 'row',
