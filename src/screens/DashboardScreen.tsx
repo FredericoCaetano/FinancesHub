@@ -332,14 +332,17 @@ function DashboardScreen() {
   //==================================================================================
   return (
     <ScreenTransition>
-      <LinearGradient
-        colors={[Colors.background1, Colors.background2]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
-        <Text style={styles.title}>Resumo Financeiro</Text>
-        <Text style={styles.subtitle}>{catchDate()}</Text>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.background1, Colors.background2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>Resumo Financeiro</Text>
+          <Text style={styles.headerSubtitle}>{catchDate()}</Text>
+        </View>
         {isLoading ? (
           renderLoading()
         ) : (
@@ -351,56 +354,67 @@ function DashboardScreen() {
               startColor="rgba(0, 0, 0, 0.05)"
               offset={[0, 3]}
             >
-              <LinearGradient
-                colors={[Colors.primaryLight, Colors.primary]}
-                start={{ x: 0, y: 1 }}
-                end={{ x: 1, y: 0 }}
-                style={{ borderRadius: 12, padding: 20 }}
-              >
-                <Text style={styles.monthlyDataLabel}>Saldo do Mês</Text>
-                <Text style={styles.monthlyDataValue}>
-                  R$ {formatMoney(monthlySummary.balance)}
-                </Text>
-                <View style={styles.monthlyDataDivider} />
-                <View
-                  style={{ flexDirection: 'row', justifyContent: 'flex-start' }}
-                >
-                  <View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <MaterialDesignIcons
-                        name="arrow-up-circle-outline"
-                        size={12}
-                        color={Colors.surface}
-                      />
-                      <Text style={styles.monthlyDataSecondaryLabel}>
-                        Entradas
+              <View style={styles.monthlyGradientContainer}>
+                <LinearGradient
+                  colors={[Colors.primary, Colors.primaryLight]}
+                  start={{ x: 0, y: 1 }}
+                  end={{ x: 1, y: 0 }}
+                  style={StyleSheet.absoluteFill}
+                />
+                <View style={styles.monthlyContent}>
+                  <Text style={styles.monthlyDataLabel}>Saldo do Mês</Text>
+                  <Text style={styles.monthlyDataValue}>
+                    R$ {formatMoney(monthlySummary.balance)}
+                  </Text>
+                  <View style={styles.monthlyDataDivider} />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                    }}
+                  >
+                    <View>
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        <MaterialDesignIcons
+                          name="arrow-up-circle-outline"
+                          size={12}
+                          color={Colors.surface}
+                        />
+                        <Text style={styles.monthlyDataSecondaryLabel}>
+                          Entradas
+                        </Text>
+                      </View>
+                      <Text style={styles.monthlyDataSecondaryValue}>
+                        R$ {formatMoney(monthlySummary.income)}
                       </Text>
                     </View>
-                    <Text style={styles.monthlyDataSecondaryValue}>
-                      R$ {formatMoney(monthlySummary.income)}
-                    </Text>
-                  </View>
-                  <View style={{ marginLeft: 80 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <MaterialDesignIcons
-                        name="arrow-down-circle-outline"
-                        size={12}
-                        color={Colors.surface}
-                      />
-                      <Text style={styles.monthlyDataSecondaryLabel}>
-                        Saídas
+                    <View style={{ marginLeft: 80 }}>
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        <MaterialDesignIcons
+                          name="arrow-down-circle-outline"
+                          size={12}
+                          color={Colors.surface}
+                        />
+                        <Text style={styles.monthlyDataSecondaryLabel}>
+                          Saídas
+                        </Text>
+                      </View>
+                      <Text style={styles.monthlyDataSecondaryValue}>
+                        R$ {formatMoney(monthlySummary.expenses)}
                       </Text>
                     </View>
-                    <Text style={styles.monthlyDataSecondaryValue}>
-                      R$ {formatMoney(monthlySummary.expenses)}
-                    </Text>
                   </View>
                 </View>
-              </LinearGradient>
+              </View>
             </Shadow>
+
             <ScrollView
-              style={{ flex: 1, marginTop: 16 }}
-              contentContainerStyle={{ paddingBottom: 16 }}
+              style={styles.dashboardScrollView}
+              contentContainerStyle={styles.dashboardScrollViewContent}
               showsVerticalScrollIndicator={false}
               nestedScrollEnabled={true}
             >
@@ -493,7 +507,7 @@ function DashboardScreen() {
             </ScrollView>
           </>
         )}
-      </LinearGradient>
+      </View>
     </ScreenTransition>
   );
 }
@@ -501,18 +515,24 @@ function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    //paddingHorizontal: 16,
   },
-  title: {
-    fontSize: 20,
+  headerContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  headerTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
     color: Colors.textPrimary,
-    marginTop: 8,
   },
-  subtitle: {
-    fontSize: 12,
+  headerSubtitle: {
+    fontSize: 14,
     color: Colors.textSecondary,
-    marginTop: 2,
   },
   loadingRow: {
     flexDirection: 'row',
@@ -523,12 +543,20 @@ const styles = StyleSheet.create({
 
   // Monthly Summary Styles
   monthlyContainer: {
-    marginTop: 16,
+    marginTop: 8,
     borderRadius: 12,
+    marginHorizontal: 16,
   },
   monthlyShadow: {
     borderRadius: 12,
     width: '100%',
+  },
+  monthlyGradientContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  monthlyContent: {
+    padding: 16,
   },
   monthlyDataLabel: {
     fontSize: 12,
@@ -554,6 +582,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: Colors.surface,
+  },
+
+  //ScrollView Styles
+  dashboardScrollView: {
+    flex: 1,
+    marginTop: 16,
+    borderRadius: 40,
+  },
+  dashboardScrollViewContent: {
+    paddingBottom: 16,
+    paddingHorizontal: 16,
   },
 
   // Transactions Styles

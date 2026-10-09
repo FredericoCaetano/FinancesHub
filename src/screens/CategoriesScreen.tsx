@@ -1195,12 +1195,13 @@ export default function CategoriesScreen() {
   //==================================================================================
   return (
     <ScreenTransition>
-      <LinearGradient
-        colors={[Colors.background1, Colors.background2]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.background1, Colors.background2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
         <View style={styles.titleContainer}>
           <View>
             <Text style={styles.title}>Categorias</Text>
@@ -1216,7 +1217,7 @@ export default function CategoriesScreen() {
         {addCategoryModal()}
         {updateCategoryModal()}
         {renderCategories()}
-      </LinearGradient>
+      </View>
     </ScreenTransition>
   );
 }

@@ -560,16 +560,19 @@ export default function ReportsScreen() {
   //==================================================================================
   return (
     <ScreenTransition>
-      <LinearGradient
-        colors={[Colors.background1, Colors.background2]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.background1, Colors.background2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
         <View style={styles.titleContainer}>
           <View>
             <Text style={styles.title}>Relatórios</Text>
-            <Text style={styles.subtitle}>Análise detalhada dos seus gastos</Text>
+            <Text style={styles.subtitle}>
+              Análise detalhada dos seus gastos
+            </Text>
           </View>
         </View>
         {renderFilter()}
@@ -589,7 +592,7 @@ export default function ReportsScreen() {
             </>
           )}
         </ScrollView>
-      </LinearGradient>
+      </View>
     </ScreenTransition>
   );
 }

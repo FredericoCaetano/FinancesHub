@@ -1077,61 +1077,72 @@ export default function FixedExpensesScreen() {
       return acc;
     }, 0);
 
-    console.log('Total Ativo:', totalActive);
-
     return (
-      <LinearGradient
-        colors={[Colors.primaryLight, Colors.primary]}
-        start={{ x: 1, y: 1 }}
-        end={{ x: 0, y: 0 }}
-        style={styles.monthlySummaryContainer}
+      <Shadow
+        containerStyle={styles.monthlySummaryContainer}
+        style={styles.monthlySummaryShadow}
+        distance={3}
+        startColor="rgba(0, 0, 0, 0.05)"
+        offset={[0, 3]}
       >
-        <Text style={styles.monthlySummaryTitle}>Impacto Mensal</Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginVertical: 12,
-          }}
-        >
-          <Text style={styles.monthlySummaryText}>
-            R$ {formatMoney(totalActive >= 0 ? totalActive : -totalActive)}
-          </Text>
-          <View
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              backgroundColor: Colors.overlayLight,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <MaterialDesignIcons
-              name={'rotate-3d-variant'}
-              size={28}
-              color={Colors.surfaceAlt}
-            />
+        <View style={styles.monthlyGradientContainer}>
+          <LinearGradient
+            colors={[Colors.primary, Colors.primaryLight]}
+            start={{ x: 1, y: 1 }}
+            end={{ x: 0, y: 0 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.monthlySummaryContent}>
+            <Text style={styles.monthlySummaryTitle}>Impacto Mensal</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginVertical: 12,
+              }}
+            >
+              <Text style={styles.monthlySummaryText}>
+                R$ {formatMoney(totalActive >= 0 ? totalActive : -totalActive)}
+              </Text>
+              <View
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                  backgroundColor: Colors.overlayLight,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <MaterialDesignIcons
+                  name={'rotate-3d-variant'}
+                  size={28}
+                  color={Colors.surfaceAlt}
+                />
+              </View>
+            </View>
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+            >
+              <Text style={styles.monthlySummarySubtitle}>
+                {totalActive >= 0 ? 'Positivo' : 'Negativo'}
+              </Text>
+              <View
+                style={{
+                  width: 2,
+                  height: 2,
+                  borderRadius: 100,
+                  backgroundColor: Colors.textInverted,
+                }}
+              />
+              <Text style={styles.monthlySummarySubtitle}>
+                {fixedExpenses.filter(exp => exp.status).length} ativos
+              </Text>
+            </View>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Text style={styles.monthlySummarySubtitle}>
-            {totalActive >= 0 ? 'Positivo' : 'Negativo'}
-          </Text>
-          <View
-            style={{
-              width: 2,
-              height: 2,
-              borderRadius: 100,
-              backgroundColor: Colors.textInverted,
-            }}
-          />
-          <Text style={styles.monthlySummarySubtitle}>
-            {fixedExpenses.filter(exp => exp.status).length} ativos
-          </Text>
-        </View>
-      </LinearGradient>
+      </Shadow>
     );
   };
 
@@ -1611,12 +1622,13 @@ export default function FixedExpensesScreen() {
 
   return (
     <ScreenTransition>
-      <LinearGradient
-        colors={[Colors.background1, Colors.background2]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.background1, Colors.background2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
         <View style={styles.titleContainer}>
           <View>
             <Text style={styles.title}>Gastos Fixos</Text>
@@ -1635,7 +1647,7 @@ export default function FixedExpensesScreen() {
 
         {addFixedExpenseModal()}
         {updateFixedExpenseModal()}
-      </LinearGradient>
+      </View>
     </ScreenTransition>
   );
 }
@@ -1644,8 +1656,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-paddingTop: 16,
-paddingBottom: 32,
+    paddingTop: 16,
+    paddingBottom: 32,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -1859,9 +1871,19 @@ paddingBottom: 32,
 
   //Monthly Summary Styles
   monthlySummaryContainer: {
-    padding: 24,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 16,
+  },
+  monthlySummaryShadow: {
+    borderRadius: 12,
+    width: '100%',
+  },
+  monthlyGradientContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  monthlySummaryContent: {
+    padding: 16,
   },
   monthlySummaryText: {
     fontSize: 28,
