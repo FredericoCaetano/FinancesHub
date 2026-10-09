@@ -1174,12 +1174,13 @@ export default function TransactionsScreen() {
 
   return (
     <ScreenTransition>
-      <LinearGradient
-        colors={[Colors.background1, Colors.background2]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.background1, Colors.background2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
         <View style={styles.titleContainer}>
           <View>
             <Text style={styles.title}>Transações</Text>
@@ -1198,7 +1199,7 @@ export default function TransactionsScreen() {
 
         {addTransactionModal()}
         {updateTransactionModal()}
-      </LinearGradient>
+      </View>
     </ScreenTransition>
   );
 }
@@ -1206,15 +1207,12 @@ export default function TransactionsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 16,
+    margin: 16,
   },
   title: {
     fontSize: 20,
