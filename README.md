@@ -81,3 +81,8 @@ yarn reinstall
 ## Dados
 
 Os dados sao armazenados localmente usando AsyncStorage. Nao ha sincronizacao remota.
+
+## Base de validação
+
+Consulte [a referência inicial do aplicativo](docs/base-validation.md)
+para ambiente, verificações, problemas conhecidos e checklist manual.
