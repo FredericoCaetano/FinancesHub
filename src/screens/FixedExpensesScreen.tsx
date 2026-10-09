@@ -15,7 +15,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
 import { useCallback, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   FixedExpense,
@@ -26,6 +25,7 @@ import {
   updateFixedExpense,
 } from '../services/fixedExpensesService';
 import ScreenTransition from '../components/ScreenTransition';
+import DateField from '../components/date-picker-component/DateField';
 
 //==================================================================================
 // Constants
@@ -284,46 +284,10 @@ export default function FixedExpensesScreen() {
   const [addFixedExpenseDateValue, setAddFixedExpenseDateValue] = useState(
     new Date(),
   );
+
+  // Status Form States
   const [addFixedExpenseStatusValue, setAddFixedExpenseStatusValue] =
     useState(true);
-  const datePickerField = () => {
-    const [show, setShow] = useState(false);
-
-    const onChange = (_: any, selectedDate?: Date) => {
-      setShow(false);
-      if (selectedDate) setAddFixedExpenseDateValue(selectedDate);
-    };
-
-    const formatDate = (d: Date) => d.toLocaleDateString('pt-BR');
-
-    return (
-      <View style={styles.addFixedExpenseModalInputContainer}>
-        <Text style={styles.addFixedExpenseModalInputLabel}>Data</Text>
-        <View style={styles.addFixedExpenseModalInputButton}>
-          <Text style={styles.addFixedExpenseModalInputButtonText}>
-            {formatDate(addFixedExpenseDateValue)}
-          </Text>
-          <TouchableOpacity onPress={() => setShow(true)}>
-            <MaterialDesignIcons
-              name="calendar-month"
-              size={16}
-              color={Colors.textSecondary}
-            />
-          </TouchableOpacity>
-
-          {show && (
-            <DateTimePicker
-              value={addFixedExpenseDateValue}
-              mode="date"
-              display="calendar" // Android
-              onValueChange={onChange}
-              maximumDate={new Date()}
-            />
-          )}
-        </View>
-      </View>
-    );
-  };
 
   //==================================================================================
   // Update Form States
@@ -404,46 +368,10 @@ export default function FixedExpensesScreen() {
   // Date Form States
   const [updateFixedExpenseDateValue, setUpdateFixedExpenseDateValue] =
     useState(new Date());
+
+  // Status Form States
   const [updateFixedExpenseStatusValue, setUpdateFixedExpenseStatusValue] =
     useState(true);
-  const updateDatePickerField = () => {
-    const [show, setShow] = useState(false);
-
-    const onChange = (_: any, selectedDate?: Date) => {
-      setShow(false);
-      if (selectedDate) setUpdateFixedExpenseDateValue(selectedDate);
-    };
-
-    const formatDate = (d: Date) => d.toLocaleDateString('pt-BR');
-
-    return (
-      <View style={styles.addFixedExpenseModalInputContainer}>
-        <Text style={styles.addFixedExpenseModalInputLabel}>Data</Text>
-        <View style={styles.addFixedExpenseModalInputButton}>
-          <Text style={styles.addFixedExpenseModalInputButtonText}>
-            {formatDate(updateFixedExpenseDateValue)}
-          </Text>
-          <TouchableOpacity onPress={() => setShow(true)}>
-            <MaterialDesignIcons
-              name="calendar-month"
-              size={16}
-              color={Colors.textSecondary}
-            />
-          </TouchableOpacity>
-
-          {show && (
-            <DateTimePicker
-              value={updateFixedExpenseDateValue}
-              mode="date"
-              display="calendar" // Andryoid
-              onValueChange={onChange}
-              maximumDate={new Date()}
-            />
-          )}
-        </View>
-      </View>
-    );
-  };
 
   //==================================================================================
   // Renders
@@ -682,7 +610,13 @@ export default function FixedExpensesScreen() {
               )}
             </View>
 
-            {datePickerField()}
+            <DateField
+              label="Data"
+              value={addFixedExpenseDateValue}
+              onChange={setAddFixedExpenseDateValue}
+              maximumDate={new Date()}
+              formVisible={addFixedExpenseVisible}
+            />
 
             <View
               style={[
@@ -994,7 +928,13 @@ export default function FixedExpensesScreen() {
               )}
             </View>
 
-            {updateDatePickerField()}
+            <DateField
+              label="Data"
+              value={updateFixedExpenseDateValue}
+              onChange={setUpdateFixedExpenseDateValue}
+              maximumDate={new Date()}
+              formVisible={updateFixedExpenseVisible}
+            />
 
             <View
               style={[

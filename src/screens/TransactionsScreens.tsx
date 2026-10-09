@@ -12,9 +12,8 @@ import { Colors } from '../theme';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   listTransactions,
   removeTransaction,
@@ -24,6 +23,7 @@ import {
 } from '../services/transactionService';
 import { useFocusEffect } from '@react-navigation/native';
 import ScreenTransition from '../components/ScreenTransition';
+import DateField from '../components/date-picker-component/DateField';
 
 //==================================================================================
 // Types
@@ -242,44 +242,6 @@ export default function TransactionsScreen() {
   const [addTransactionDateValue, setAddTransactionDateValue] = useState(
     new Date(),
   );
-  const datePickerField = () => {
-    const [show, setShow] = useState(false);
-
-    const onChange = (_: any, selectedDate?: Date) => {
-      setShow(false);
-      if (selectedDate) setAddTransactionDateValue(selectedDate);
-    };
-
-    const formatDate = (d: Date) => d.toLocaleDateString('pt-BR');
-
-    return (
-      <View style={styles.addTransactionModalInputContainer}>
-        <Text style={styles.addTransactionModalInputLabel}>Data</Text>
-        <View style={styles.addTransactionModalInputButton}>
-          <Text style={styles.addTransactionModalInputButtonText}>
-            {formatDate(addTransactionDateValue)}
-          </Text>
-          <TouchableOpacity onPress={() => setShow(true)}>
-            <MaterialDesignIcons
-              name="calendar-month"
-              size={16}
-              color={Colors.textSecondary}
-            />
-          </TouchableOpacity>
-
-          {show && (
-            <DateTimePicker
-              value={addTransactionDateValue}
-              mode="date"
-              display="calendar" // Android
-              onValueChange={onChange}
-              maximumDate={new Date()}
-            />
-          )}
-        </View>
-      </View>
-    );
-  };
 
   //==================================================================================
   // Update Form States
@@ -340,44 +302,6 @@ export default function TransactionsScreen() {
   const [updateTransactionDateValue, setUpdateTransactionDateValue] = useState(
     new Date(),
   );
-  const updateDatePickerField = () => {
-    const [show, setShow] = useState(false);
-
-    const onChange = (_: any, selectedDate?: Date) => {
-      setShow(false);
-      if (selectedDate) setUpdateTransactionDateValue(selectedDate);
-    };
-
-    const formatDate = (d: Date) => d.toLocaleDateString('pt-BR');
-
-    return (
-      <View style={styles.addTransactionModalInputContainer}>
-        <Text style={styles.addTransactionModalInputLabel}>Data</Text>
-        <View style={styles.addTransactionModalInputButton}>
-          <Text style={styles.addTransactionModalInputButtonText}>
-            {formatDate(updateTransactionDateValue)}
-          </Text>
-          <TouchableOpacity onPress={() => setShow(true)}>
-            <MaterialDesignIcons
-              name="calendar-month"
-              size={16}
-              color={Colors.textSecondary}
-            />
-          </TouchableOpacity>
-
-          {show && (
-            <DateTimePicker
-              value={updateTransactionDateValue}
-              mode="date"
-              display="calendar" // Android
-              onValueChange={onChange}
-              maximumDate={new Date()}
-            />
-          )}
-        </View>
-      </View>
-    );
-  };
 
   //==================================================================================
   // Filter States
@@ -581,7 +505,13 @@ export default function TransactionsScreen() {
               )}
             </View>
 
-            {datePickerField()}
+            <DateField
+              label="Data"
+              value={addTransactionDateValue}
+              onChange={setAddTransactionDateValue}
+              maximumDate={new Date()}
+              formVisible={addTransactionVisible}
+            />
 
             {/* Botão para adicionar transação */}
             <TouchableOpacity
@@ -792,7 +722,13 @@ export default function TransactionsScreen() {
               )}
             </View>
 
-            {updateDatePickerField()}
+            <DateField
+              label="Data"
+              value={updateTransactionDateValue}
+              onChange={setUpdateTransactionDateValue}
+              maximumDate={new Date()}
+              formVisible={updateTransactionVisible}
+            />
 
             {/* Botão para atualizar transação */}
             <TouchableOpacity
@@ -1207,12 +1143,13 @@ export default function TransactionsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    margin: 16,
+    marginBottom: 16,
   },
   title: {
     fontSize: 20,
